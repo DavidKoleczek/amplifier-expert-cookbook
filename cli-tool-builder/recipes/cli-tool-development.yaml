@@ -1,0 +1,230 @@
+name: "cli-tool-development"
+description: "Multi-stage CLI application development: recon, pilot implementations, building blocks, planning, implementation, and testing"
+version: "2.0.0"
+author: "amplifier"
+tags: ["cli", "development", "multi-stage", "evaluation"]
+
+context:
+  # Required: Description of the CLI tool to build
+  cli_description: ""
+  # Optional: Target directory for the project
+  project_dir: "."
+  # Optional: Working directory for intermediate artifacts
+  working_dir: ".ai_working"
+
+recursion:
+  max_depth: 2
+  max_total_steps: 300
+
+steps:
+  # Stage 1: Capability Reconnaissance
+  - id: "capability-recon"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      I need to build this CLI application:
+
+      {{cli_description}}
+
+      Perform a capability reconnaissance:
+
+      1. **Identify Key Aspects**: Break down the request into multiple key aspects that will be tricky to get correct. Consider:
+         - Does the app require finding data from third party sources?
+         - Does it rely on a key algorithmic innovation?
+         - What external dependencies or APIs are involved?
+
+      2. **For each key aspect**, provide:
+         - A clear description of the challenge
+         - 3-5 different approaches that could solve it. Come up with diverse strategies.
+           - For example 3 different APIs is not diverse. Consider agentic solutions, web scraping, direct source access, etc.
+         - Code sketches for each approach
+         - Difficult test cases that could poke holes in implementations (minimum 3)
+
+      Remember: When faced with challenging data problems, the Claude Agent SDK with web search can often solve them.
+
+      Output format:
+      ```
+      ## Key Aspect 1: [Name]
+      ### Challenge
+      [Description]
+
+      ### Approach A: [Name]
+      [Description and code sketch]
+
+      ### Approach B: [Name]
+      [Description and code sketch]
+
+      ### Approach C: [Name]
+      [Description and code sketch]
+
+      ### Difficult Test Cases
+      - [Test case 1]
+      - [Test case 2]
+      - [Test case 3]
+
+      ## Key Aspect 2: [Name]
+      ...
+      ```
+    output: "capability_recon"
+    timeout: 600
+
+  # Stage 2: Pilot Implementations of Building Blocks
+  - id: "pilot-implementations"
+    agent: "foundation:modular-builder"
+    prompt: |
+      You are in stage 2 of building a CLI application. Implement pilot versions of the building blocks identified in the capability reconnaissance.
+
+      Original request: {{cli_description}}
+
+      Capability Reconnaissance:
+      {{capability_recon}}
+
+      Project directory: {{project_dir}}
+
+      For each key aspect identified:
+      1. Create `experimental_building_blocks/[aspect_name]/` directory
+      2. Implement each proposed approach in that directory
+      3. Test each implementation with the difficult test cases - at least FIVE test cases per approach
+      4. Document which approach works best and why
+
+      After implementing and testing, create `experimental_building_blocks/PILOT_SUMMARY.md` with:
+      - For each key aspect: which approach worked best and why
+      - Any unexpected findings or challenges
+      - Recommendations for production implementation
+
+      IMPORTANT: Only recommend approaches that passed EVERY test. If no approach passes all tests, consider less optimal but working solutions like web search or direct scraping.
+    output: "pilot_summary"
+    timeout: 900
+
+  # Stage 3: Build Production Building Blocks
+  - id: "build-blocks"
+    agent: "foundation:modular-builder"
+    prompt: |
+      You are in stage 3. Build robust production-ready building blocks using the best pilot implementations.
+
+      Original request: {{cli_description}}
+
+      Pilot Summary:
+      {{pilot_summary}}
+
+      Project directory: {{project_dir}}
+
+      For each key aspect that was piloted:
+      1. Create `building_blocks/[aspect_name]/` directory
+      2. Implement the best approach identified in the pilot phase
+      3. Ensure the building block has a clean API for integration
+      4. Include end-to-end tests
+
+      Create `building_blocks/BLOCKS_SUMMARY.md` documenting:
+      - Each building block's purpose and API
+      - How to use each block
+      - Dependencies required
+      - How blocks will integrate in the final application
+
+      If a building block still fails, consider agentic fallbacks using Claude with web search.
+    output: "blocks_summary"
+    timeout: 900
+
+  # Stage 4: Plan the Final Application
+  - id: "plan-application"
+    agent: "foundation:zen-architect"
+    mode: "ARCHITECT"
+    prompt: |
+      You are in stage 4. Plan the final CLI application using the building blocks developed in previous stages.
+
+      Original request: {{cli_description}}
+
+      Building Blocks:
+      {{blocks_summary}}
+
+      Project directory: {{project_dir}}
+
+      Create a comprehensive implementation plan:
+
+      1. **Architecture Overview**
+         - High-level structure of the CLI
+         - How building blocks integrate together
+         - Data flow through the application
+
+      2. **CLI Interface Design**
+         - Commands and subcommands
+         - Arguments and options
+         - Help text and documentation
+
+      3. **Implementation Steps**
+         - Ordered list of implementation tasks
+         - Dependencies between tasks
+         - Estimated complexity for each
+
+      4. **File Structure**
+         - Directory layout
+         - Module organization
+         - Entry points
+
+      5. **Testing Strategy**
+         - Integration tests
+         - End-to-end test scenarios
+
+      Write the plan to `{{working_dir}}/IMPLEMENTATION_PLAN.md` in the project directory.
+    output: "implementation_plan"
+    timeout: 600
+
+  # Stage 5: Build the Final Application
+  - id: "build-application"
+    agent: "foundation:modular-builder"
+    prompt: |
+      You are in stage 5. Implement the final CLI application according to the plan at `{{working_dir}}/IMPLEMENTATION_PLAN.md`.
+
+      Original request: {{cli_description}}
+
+      Project directory: {{project_dir}}
+
+      Ensure the application:
+      - Has a clear entry point (e.g., `cli.py` or `main.py`)
+      - Provides helpful error messages
+      - Handles edge cases gracefully
+
+      At the end, create a README.md file (~100 lines) with:
+      - High-level overview of what it does
+      - How it works
+      - Usage examples
+    output: "build_output"
+    timeout: 900
+
+  # Stage 6: Test and Debug
+  - id: "test-application"
+    agent: "foundation:bug-hunter"
+    prompt: |
+      You are in stage 6. Thoroughly test and debug the CLI application.
+
+      Original request: {{cli_description}}
+
+      Build output:
+      {{build_output}}
+
+      Project directory: {{project_dir}}
+
+      Perform comprehensive testing:
+
+      1. **Functional Tests**
+         - Test all commands and subcommands
+         - Test with valid inputs
+         - Test with various argument combinations
+
+      2. **Integration Tests**
+         - End-to-end workflows
+         - Real-world usage scenarios
+
+      3. **Edge Cases**
+         - Invalid inputs
+         - Missing dependencies
+         - Error conditions
+
+      Fix any bugs discovered during testing.
+
+      Provide a final summary:
+      - Tests performed
+      - Bugs found and fixed
+      - Final verification status
+    output: "final_output"
+    timeout: 900
