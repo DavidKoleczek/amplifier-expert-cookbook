@@ -1,10 +1,11 @@
 # Copyright (c) Microsoft. All rights reserved.
-name: cli-tool-builder
-description: "Multi-stage CLI tool development with capability reconnaissance, pilot implementations, and iterative building"
-version: "1.0.0"
+bundle:
+  name: cli-tool-builder
+  description: "Multi-stage CLI tool development with capability reconnaissance, pilot implementations, and iterative building"
+  version: "1.0.0"
 
 includes:
-  - foundation
+  - bundle: foundation
 
 # Context files automatically loaded for all agents
 context:
