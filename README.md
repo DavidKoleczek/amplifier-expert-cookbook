@@ -11,7 +11,7 @@ Multi-stage CLI application development with capability reconnaissance and pilot
 ### Setup
 
 ```bash
-amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder
+amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder/bundle.md
 amplifier bundle use cli-tool-builder
 ```
 

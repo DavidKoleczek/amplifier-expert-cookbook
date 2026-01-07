@@ -13,5 +13,5 @@ This repository contains multiple bundles. Use `#subdirectory=` to load specific
 
 Example:
 ```
-amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder
+amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder/bundle.md
 ```
