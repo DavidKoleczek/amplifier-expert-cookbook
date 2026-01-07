@@ -6,6 +6,7 @@ bundle:
 
 includes:
   - bundle: foundation
+  - bundle: git+https://github.com/microsoft/amplifier-bundle-recipes@main#subdirectory=behaviors/recipes.yaml
 
 context:
   include:
