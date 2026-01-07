@@ -1,7 +1,8 @@
 ---
-name: amplifier-expert-cookbook
-version: 0.1.0
-description: Expert examples and reusable workflows for Amplifier
+bundle:
+  name: amplifier-expert-cookbook
+  version: 0.1.0
+  description: Expert examples and reusable workflows for Amplifier
 ---
 
 # Amplifier Expert Cookbook
