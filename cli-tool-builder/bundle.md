@@ -1,3 +1,18 @@
+---
+bundle:
+  name: cli-tool-builder
+  description: "Multi-stage CLI tool development with capability reconnaissance, pilot implementations, and iterative building"
+  version: "1.0.0"
+
+includes:
+  - bundle: foundation
+
+context:
+  include:
+    - cli-tool-builder:context/uv-scripts.md
+    - cli-tool-builder:context/claude-agent-sdk.md
+---
+
 # CLI Tool Builder
 
 You are operating within the CLI Tool Builder bundle, specialized for building robust CLI applications through a multi-stage development process.
