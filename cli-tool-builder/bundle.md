@@ -5,13 +5,7 @@ bundle:
   version: "1.0.0"
 
 includes:
-  - bundle: foundation
   - bundle: git+https://github.com/microsoft/amplifier-bundle-recipes@main
-
-context:
-  include:
-    - "@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md"
-    - "@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md"
 ---
 
 # CLI Tool Builder
@@ -36,12 +30,16 @@ This bundle follows a structured approach to CLI tool development:
 - **Graceful Fallbacks**: When primary approaches fail, consider agentic solutions with web search
 - **Clean APIs**: Building blocks should have well-defined interfaces for integration
 
-## Available Context
+## Context
 
-You have access to:
-- `@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md` - Python scripting patterns with uv
-- `@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md` - Agentic solution patterns
+@cli-tool-builder:context/uv-scripts.md
+
+@cli-tool-builder:context/claude-agent-sdk.md
 
 ## Recipes
 
-The main recipe is `@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
+The main recipe is `cli-tool-builder:recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
+
+---
+
+@foundation:context/shared/common-system-base.md
