@@ -1,0 +1,84 @@
+# Workflow Catalog
+# ================
+# This file defines available workflows for the AI router.
+# Toggle workflows by setting `enabled: true/false`.
+# Add new workflows by copying an existing entry.
+#
+# The AI uses the `description` field to determine if a user's request
+# matches a workflow. No explicit triggers needed - just describe what
+# the workflow does clearly.
+
+workflows:
+  - id: arc-agi
+    name: "ARC-AGI Solver"
+    enabled: true
+    description: >
+      Solve ARC-AGI-2 tasks using iterative code synthesis with parallel experts
+      and majority voting. Use this for ARC-AGI puzzles, grid transformation
+      challenges, or any task involving the ARC-AGI benchmark.
+    recipe: "@amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml"
+    context:
+      required:
+        - name: task_file
+          description: "Path to the ARC task file (markdown or JSON format)"
+      optional:
+        - name: working_dir
+          description: "Output directory for results"
+          default: "./arc_output"
+        - name: max_iterations
+          description: "Maximum refinement attempts per expert"
+          default: 3
+
+  - id: cli-tool
+    name: "CLI Tool Builder"
+    enabled: true
+    description: >
+      Build CLI applications through a multi-stage development process:
+      capability reconnaissance, pilot implementations, production building
+      blocks, and iterative testing. Use this when someone wants to create
+      a command-line tool, terminal application, or CLI utility.
+    recipe: "@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml"
+    context:
+      required:
+        - name: cli_description
+          description: "Description of the CLI tool to build"
+      optional:
+        - name: project_dir
+          description: "Target directory for the project"
+          default: "."
+        - name: working_dir
+          description: "Directory for intermediate artifacts"
+          default: ".ai_working"
+
+# ============================================================================
+# HOW TO ADD A NEW WORKFLOW
+# ============================================================================
+#
+# 1. Copy an existing workflow entry above
+# 2. Update the following fields:
+#    - id: Unique identifier (lowercase, hyphens)
+#    - name: Human-readable name
+#    - enabled: Set to true to activate
+#    - description: Clear description of what this workflow does and when to use it
+#    - recipe: Path to recipe YAML using @bundle:path format
+#    - context.required: Variables the user MUST provide
+#    - context.optional: Variables with sensible defaults
+#
+# 3. Create the corresponding recipe in a subdirectory:
+#    my-workflow/
+#    ├── bundle.md        # Optional: for standalone use
+#    ├── README.md
+#    └── recipes/
+#        └── my-recipe.yaml
+#
+# ============================================================================
+# HOW TO DISABLE A WORKFLOW
+# ============================================================================
+#
+# Set enabled: false on any workflow to prevent routing to it.
+# The workflow will still be accessible via direct recipe invocation.
+#
+# Example:
+#   - id: arc-agi
+#     enabled: false  # Disabled - won't be routed to automatically
+#
