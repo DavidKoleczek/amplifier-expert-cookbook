@@ -1,6 +1,6 @@
 # Amplifier Expert Cookbook
 
-Expert examples and reusable workflows for [Amplifier](https://github.com/microsoft/amplifier).
+Expert examples and reusable bundles for [Amplifier](https://github.com/microsoft/amplifier) leveraging [recipes](https://github.com/microsoft/amplifier-bundle-recipes).
 
 ## Quick Start
 
