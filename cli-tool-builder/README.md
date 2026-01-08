@@ -17,11 +17,19 @@ Run the main recipe:
 amplifier tool invoke recipes operation=execute recipe_path="@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml" context='{"cli_description": "Build a CLI that..."}'
 ```
 
-Or in a session:
+Or in an interactive session:
+
+```bash
+amplifier
+```
+
+Then:
 
 ```
-Run the cli-tool-development recipe with cli_description: "Build a CLI that..."
+Run the recipe at @amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml with cli_description: "Build a CLI that..."
 ```
+
+**Note:** For subdirectory bundles, use the root bundle namespace (`@amplifier-expert-cookbook:`) with the full path from repo root, not the subdirectory bundle name.
 
 ## Development Stages
 
