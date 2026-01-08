@@ -5,6 +5,7 @@ bundle:
   description: Expert workflows for specialized tasks - intelligent routing to appropriate recipes based on user intent
 
 includes:
+  - bundle: git+https://github.com/microsoft/amplifier-foundation@main
   - bundle: git+https://github.com/microsoft/amplifier-bundle-recipes@main
 ---
 
