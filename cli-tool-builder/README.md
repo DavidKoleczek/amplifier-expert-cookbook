@@ -11,28 +11,53 @@ amplifier bundle use cli-tool-builder
 
 ## Usage
 
-Run the main recipe:
+**Interactive:**
+```
+amplifier run
+> Run the cli-tool-development recipe with cli_description: "Build a CLI tool that..."
+```
 
+**Non-Interactive:**
 ```bash
-amplifier tool invoke recipes operation=execute recipe_path="@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml" context='{"cli_description": "Build a CLI that..."}'
+amplifier recipes execute cli-tool-builder:recipes/cli-tool-development.yaml \
+  --context '{"cli_description": "Build a CLI tool that..."}'
 ```
 
-Or in a session:
+## Context Variables
 
-```
-Run the cli-tool-development recipe with cli_description: "Build a CLI that..."
-```
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `cli_description` | Yes | - | Full description of the CLI tool to build |
+| `project_dir` | No | `.` | Target directory for the project |
+| `working_dir` | No | `.ai_working` | Directory for intermediate artifacts |
 
 ## Development Stages
 
-1. **Capability Reconnaissance** - Identify key challenges and explore multiple approaches
-2. **Pilot Implementations** - Test each approach with rigorous test cases
-3. **Production Building Blocks** - Build robust implementations of winning approaches
-4. **Application Planning** - Design the final CLI architecture
-5. **Implementation** - Build the complete application
-6. **Testing** - Thorough testing and bug fixing
+The recipe executes 6 stages:
 
-## Available Context
+1. **Capability Reconnaissance** - Identify key challenges and propose 3-5 diverse approaches per challenge with test cases
+2. **Pilot Implementations** - Implement and test each approach (5+ test cases each), document which works best
+3. **Production Building Blocks** - Build robust implementations of winning approaches with clean APIs
+4. **Application Planning** - Design CLI architecture, file structure, and implementation steps
+5. **Implementation** - Build the complete application with entry point and error handling
+6. **Testing** - Comprehensive functional, integration, and edge case testing
 
-- `@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md` - Python scripting patterns with uv
-- `@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md` - Agentic solution patterns
+## Context Files
+
+The bundle provides two context files to agents:
+
+- **uv-scripts.md** - Python/uv patterns: inline dependencies (PEP 723), CLI frameworks (typer/click), modular project imports
+- **claude-agent-sdk.md** - Agentic solutions using Claude Agent SDK for intelligent features and fallback strategies
+
+## Structure
+
+```
+cli-tool-builder/
+├── bundle.md               # Bundle configuration and agent instructions
+├── README.md               # This file
+├── context/
+│   ├── uv-scripts.md       # Python scripting patterns
+│   └── claude-agent-sdk.md # Agentic solution patterns
+└── recipes/
+    └── cli-tool-development.yaml  # 6-stage development workflow
+```

@@ -1,63 +1,41 @@
-# CLI Tool Builder
+# Amplifier Expert Cookbook
 
-An Amplifier bundle for building CLI applications through multi-stage development.
+Expert examples and reusable workflows for Amplifier. This repository contains multiple bundles that can be loaded independently.
 
-## Setup
+## Available Bundles
 
+### cli-tool-builder
+
+Multi-stage CLI application development with capability reconnaissance, pilot implementations, and iterative building.
+
+**Installation:**
 ```bash
-amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main
+amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder
 amplifier bundle use cli-tool-builder
 ```
 
-## Usage
-
-**Interactive:**
-
-```
-Run the cli-tool-development recipe with cli_description: "Build a CLI tool that..."
-```
-
-**Non-Interactive:**
-
+**Usage:**
 ```bash
+# Interactive
+amplifier run
+> Run the cli-tool-development recipe with cli_description: "Build a CLI tool that..."
+
+# Non-interactive
 amplifier recipes execute cli-tool-builder:recipes/cli-tool-development.yaml \
   --context '{"cli_description": "Build a CLI tool that..."}'
 ```
 
-## Process
+See [cli-tool-builder/README.md](cli-tool-builder/README.md) for detailed documentation.
 
-The recipe executes 6 stages:
+## Adding More Bundles
 
-1. **Capability Recon** - Identify challenges, propose 3-5 diverse approaches per challenge, define test cases
-2. **Pilot Implementations** - Implement and test each approach (5+ test cases each)
-3. **Building Blocks** - Build production versions of winning approaches
-4. **Planning** - Design CLI architecture using the building blocks
-5. **Implementation** - Build the complete application
-6. **Testing** - Comprehensive testing and bug fixes
+To add a new bundle to this cookbook:
 
-## Context Variables
+1. Create a new directory: `my-bundle/`
+2. Add `bundle.md` with YAML frontmatter and instructions
+3. Add `README.md` with human documentation
+4. Add context files in `context/` and recipes in `recipes/` as needed
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `cli_description` | Yes | - | Full description of the CLI tool to build |
-| `project_dir` | No | `.` | Target directory for the project |
-| `working_dir` | No | `.ai_working` | Directory for intermediate artifacts |
+## License
 
-## Context Files
-
-The bundle provides two context files to agents:
-
-- **uv-scripts.md** - Python/uv patterns: inline dependencies (PEP 723), CLI frameworks (typer/click), modular project imports
-- **claude-agent-sdk.md** - Agentic solutions using Claude Agent SDK: `query()`, `ClaudeSDKClient`, custom tools
-
-## Structure
-
-```
-amplifier-expert-cookbook/
-├── bundle.md
-├── context/
-│   ├── uv-scripts.md
-│   └── claude-agent-sdk.md
-└── recipes/
-    └── cli-tool-development.yaml
-```
+MIT
