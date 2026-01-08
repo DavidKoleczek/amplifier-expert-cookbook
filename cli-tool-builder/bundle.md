@@ -38,7 +38,7 @@ This bundle follows a structured approach to CLI tool development:
 
 ## Recipes
 
-The main recipe is `cli-tool-builder:recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
+The main recipe is `@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
 
 ---
 
