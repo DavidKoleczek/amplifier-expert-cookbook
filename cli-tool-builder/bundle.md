@@ -10,8 +10,8 @@ includes:
 
 context:
   include:
-    - "@cli-tool-builder:context/uv-scripts.md"
-    - "@cli-tool-builder:context/claude-agent-sdk.md"
+    - "@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md"
+    - "@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md"
 ---
 
 # CLI Tool Builder
@@ -39,9 +39,9 @@ This bundle follows a structured approach to CLI tool development:
 ## Available Context
 
 You have access to:
-- `@cli-tool-builder:context/uv-scripts.md` - Python scripting patterns with uv
-- `@cli-tool-builder:context/claude-agent-sdk.md` - Agentic solution patterns
+- `@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md` - Python scripting patterns with uv
+- `@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md` - Agentic solution patterns
 
 ## Recipes
 
-The main recipe is `@cli-tool-builder:recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
+The main recipe is `@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml` which orchestrates the full development workflow.

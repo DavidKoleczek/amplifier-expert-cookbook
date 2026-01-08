@@ -14,7 +14,7 @@ amplifier bundle use cli-tool-builder
 Run the main recipe:
 
 ```bash
-amplifier tool invoke recipes operation=execute recipe_path="@cli-tool-builder:recipes/cli-tool-development.yaml" context='{"cli_description": "Build a CLI that..."}'
+amplifier tool invoke recipes operation=execute recipe_path="@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml" context='{"cli_description": "Build a CLI that..."}'
 ```
 
 Or in a session:
@@ -34,5 +34,5 @@ Run the cli-tool-development recipe with cli_description: "Build a CLI that..."
 
 ## Available Context
 
-- `@cli-tool-builder:context/uv-scripts.md` - Python scripting patterns with uv
-- `@cli-tool-builder:context/claude-agent-sdk.md` - Agentic solution patterns
+- `@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md` - Python scripting patterns with uv
+- `@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md` - Agentic solution patterns
