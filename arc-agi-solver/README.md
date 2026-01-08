@@ -13,21 +13,36 @@ amplifier bundle use arc-agi-solver
 
 ## How It Works
 
-1. **Problem Parsing** - Task file is parsed to extract training input/output pairs and test inputs
-2. **Parallel Expert Execution** - Three experts run in parallel with different models/seeds
-3. **Iterative Refinement** - Each expert generates code, tests it, reviews feedback, and refines
-4. **Majority Voting** - Consensus voting selects the most confident answers
+```mermaid
+flowchart TD
+    Task[Task File] --> E0[Expert 0<br/>Claude]
+    Task --> E1[Expert 1<br/>GPT]
+    Task --> E2[Expert 2<br/>Claude]
+    
+    E0 --> Loop
+    E1 --> Loop
+    E2 --> Loop
+    
+    subgraph Loop[Iterative Refinement]
+        direction LR
+        Generate[Generate<br/>transform] --> Test[Test via<br/>Sandbox]
+        Test --> Feedback{All<br/>Pass?}
+        Feedback -->|No| Refine[Refine<br/>Code]
+        Refine --> Generate
+    end
+    
+    Feedback -->|Yes| Vote[Majority Vote]
+    Vote --> Answers[ANSWERS]
+```
 
-## Recipe Stages
+Each expert independently:
+1. Analyzes training examples
+2. Generates `transform()` code
+3. Tests against training data via sandbox
+4. Receives detailed feedback (pixel diffs, accuracy)
+5. Refines until all examples pass
 
-| Stage | Description |
-|-------|-------------|
-| Setup | Create working directories |
-| Read Task | Parse and validate task file |
-| Run Experts | 3 parallel experts iterate on solutions |
-| Collect Results | Gather all expert outputs |
-| Vote | Majority voting on test predictions |
-| Report | Generate final answer files |
+Final answers selected by consensus voting across experts.
 
 ## Context Variables
 
