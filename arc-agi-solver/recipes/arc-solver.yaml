@@ -1,0 +1,227 @@
+# ARC-AGI-2 Solver Recipe
+# =======================
+# Solves ARC-AGI-2 tasks using iterative code synthesis with parallel experts.
+#
+# Based on the Poetiq approach:
+# 1. LLM generates transform() code
+# 2. Code is tested against training examples
+# 3. Detailed feedback (pixel diffs, accuracy) guides refinement
+# 4. Multiple experts run in parallel
+# 5. Majority voting selects final answers
+#
+# Usage:
+#   Execute via Amplifier recipes tool with context:
+#   {"task_file": "path/to/task.txt", "working_dir": "./output"}
+
+name: arc-agi-solver
+description: Solve ARC-AGI-2 tasks using iterative code synthesis with parallel experts and voting
+version: "1.0.0"
+author: "Amplifier"
+tags: ["arc-agi", "code-synthesis", "parallel-experts", "voting"]
+
+context:
+  task_file: ""                    # Required: path to task file (markdown or JSON)
+  working_dir: "./arc_output"      # Working directory for outputs
+  max_iterations: 10               # Max refinement attempts per expert
+  sandbox_script: "./arc-agi-solver/scripts/sandbox.py"  # Path to sandbox script (relative to repo root)
+
+steps:
+  # Step 1: Setup working directory
+  - id: "setup"
+    type: "bash"
+    command: |
+      mkdir -p {{working_dir}}/experts
+      mkdir -p {{working_dir}}/results
+      echo "Working directory: {{working_dir}}"
+      echo "Task file: {{task_file}}"
+
+  # Step 2: Read and validate task file
+  - id: "read-task"
+    type: "bash"
+    command: |
+      cat "{{task_file}}"
+    output: "task_content"
+
+  # Step 3: Generate expert configurations
+  # 3 experts with different providers for diversity
+  - id: "create-experts"
+    type: "bash"
+    command: |
+      cat << 'EOF'
+      [
+        {"id": 0, "name": "claude-expert", "provider": "anthropic", "description": "Claude expert"},
+        {"id": 1, "name": "gpt-expert", "provider": "openai", "description": "GPT expert"},
+        {"id": 2, "name": "claude-expert-2", "provider": "anthropic", "description": "Claude expert with different seed"}
+      ]
+      EOF
+    output: "expert_configs"
+    parse_json: true
+
+  # Step 4: Run parallel experts
+  # Each expert iteratively generates and refines code
+  - id: "run-experts"
+    foreach: "{{expert_configs}}"
+    as: "expert"
+    parallel: true
+    agent: "foundation:modular-builder"
+    prompt: |
+      You are Expert {{expert.id}} ({{expert.name}}) solving an ARC-AGI-2 task.
+      
+      ## Your Task
+      
+      Write a Python `transform(grid: np.ndarray) -> np.ndarray` function that transforms 
+      input grids to output grids based on the pattern in the training examples.
+      
+      ## The Problem
+      
+      {{task_content}}
+      
+      ## Instructions
+      
+      1. **Analyze** the training examples carefully
+      2. **Generate** a transform() function in Python
+      3. **Test** your code by running:
+         ```bash
+         uv run {{sandbox_script}} --code-file={{working_dir}}/experts/expert_{{expert.id}}_code.py --task-file={{task_file}} --output=text
+         ```
+      4. **Review** the feedback - it shows:
+         - Which examples passed/failed
+         - Pixel-level diffs (predicted/expected) for wrong cells
+         - Accuracy percentage
+      5. **Refine** your code based on feedback
+      6. **Repeat** until ALL training examples pass or you've tried {{max_iterations}} times
+      
+      ## Code Requirements
+      
+      - Function signature: `def transform(grid: np.ndarray) -> np.ndarray`
+      - Available libraries: numpy (as np), scipy
+      - Return a 2D numpy array
+      - Handle edge cases gracefully
+      
+      ## Output Format
+      
+      When you find a working solution (or your best attempt after {{max_iterations}} tries):
+      
+      1. Save your final code to: {{working_dir}}/experts/expert_{{expert.id}}_code.py
+      2. Run the sandbox to get test outputs:
+         ```bash
+         uv run {{sandbox_script}} --code-file={{working_dir}}/experts/expert_{{expert.id}}_code.py --task-file={{task_file}} --output=json
+         ```
+      3. Save the full results JSON to: {{working_dir}}/experts/expert_{{expert.id}}_results.json
+      
+      Return a summary with:
+      - Whether all training examples passed
+      - Your accuracy score
+      - The test outputs (as JSON arrays)
+      - Brief explanation of your solution approach
+    output: "expert_result"
+    collect: "expert_results"
+    timeout: 600
+
+  # Step 5: Collect and parse all expert results
+  - id: "collect-results"
+    type: "bash"
+    command: |
+      echo "=== Collecting Expert Results ==="
+      results="[]"
+      for i in 0 1 2; do
+        result_file="{{working_dir}}/experts/expert_${i}_results.json"
+        if [ -f "$result_file" ]; then
+          echo "Found results for expert $i"
+          cat "$result_file"
+          echo ""
+        else
+          echo "No results file for expert $i"
+        fi
+      done
+      
+      # Combine all result files into one JSON array
+      python3 << 'PYTHON'
+      import json
+      import os
+      
+      working_dir = "{{working_dir}}"
+      all_results = []
+      
+      for i in range(3):
+          result_file = f"{working_dir}/experts/expert_{i}_results.json"
+          if os.path.exists(result_file):
+              try:
+                  with open(result_file) as f:
+                      data = json.load(f)
+                      data["expert_id"] = i
+                      all_results.append(data)
+              except Exception as e:
+                  print(f"Error reading expert {i}: {e}")
+      
+      print(json.dumps(all_results, indent=2))
+      PYTHON
+    output: "all_expert_results"
+    parse_json: true
+
+  # Step 6: Majority voting on test outputs
+  - id: "vote"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      ## Task: Majority Voting on Expert Results
+      
+      You have results from multiple experts who attempted to solve an ARC-AGI-2 task.
+      Perform majority voting to select the best answers.
+      
+      ## Expert Results Summary
+      
+      {{expert_results}}
+      
+      ## Collected Results (JSON)
+      
+      {{all_expert_results}}
+      
+      ## Voting Rules
+      
+      1. **Group by Output**: For each test input, group experts by their predicted output grid
+      2. **Count Votes**: Solutions that multiple experts agree on get more votes
+      3. **Rank by Consensus**: Higher vote count = higher confidence
+      4. **Tiebreaker**: If tied, prefer solutions from experts that passed all training examples
+      5. **Select Top 2**: ARC-AGI allows 2 attempts per test input
+      
+      ## Output Format
+      
+      For each test input, provide:
+      1. **Primary prediction** (most votes)
+      2. **Secondary prediction** (second most votes, or same if only one unique answer)
+      3. Vote counts and confidence assessment
+      
+      **CRITICAL**: Save the final answers as JSON files in the PROJECT ROOT directory:
+      - ./ANSWER_0.json (for Test 0)
+      - ./ANSWER_1.json (for Test 1, if applicable)
+      
+      DO NOT put them in a subdirectory. They MUST be at the project root (e.g., /project/ANSWER_0.json).
+      
+      Each file should contain ONLY the grid as a JSON array, e.g.:
+      [[0, 1, 2], [3, 4, 5]]
+      
+      Provide your analysis and the final voted predictions.
+    output: "voting_result"
+    timeout: 300
+
+  # Step 7: Generate final report
+  - id: "report"
+    type: "bash"
+    command: |
+      echo "=== ARC-AGI-2 Solver Results ==="
+      echo ""
+      echo "Task: {{task_file}}"
+      echo "Working Directory: {{working_dir}}"
+      echo ""
+      echo "=== Answer Files ==="
+      for f in ./ANSWER_*.json; do
+        if [ -f "$f" ]; then
+          echo "$(basename $f):"
+          cat "$f"
+          echo ""
+        fi
+      done
+      echo ""
+      echo "=== Expert Code Files ==="
+      ls -la {{working_dir}}/experts/*.py 2>/dev/null || echo "No code files found"
