@@ -2,6 +2,13 @@
 
 Multi-stage CLI application development with capability reconnaissance and pilot implementations.
 
+## Installation
+
+```bash
+amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=cli-tool-builder
+amplifier bundle use cli-tool-builder
+```
+
 ## Development Stages
 
 The recipe executes 6 stages:

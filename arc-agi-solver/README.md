@@ -4,6 +4,13 @@ Solve [ARC-AGI-2](https://github.com/arcprize/ARC-AGI-2) tasks using iterative c
 
 Based on [Poetiq's ARC-AGI solver](https://github.com/poetiq-ai/poetiq-arc-agi-solver).
 
+## Installation
+
+```bash
+amplifier bundle add git+https://github.com/DavidKoleczek/amplifier-expert-cookbook@main#subdirectory=arc-agi-solver
+amplifier bundle use arc-agi-solver
+```
+
 ## How It Works
 
 1. **Problem Parsing** - Task file is parsed to extract training input/output pairs and test inputs
