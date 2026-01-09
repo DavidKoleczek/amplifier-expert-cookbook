@@ -1,0 +1,164 @@
+name: "generic-task"
+description: "3-phase task execution: capability recon, build/plan, execute and validate"
+version: "1.1.0"
+author: "amplifier-expert-cookbook"
+tags: ["general", "building", "modular", "default"]
+
+# General-purpose workflow for any non-trivial task.
+# Handles both coding and non-coding tasks with appropriate approaches.
+#
+# Usage:
+#   amplifier run "execute generic-task.yaml with task_description='...'"
+
+context:
+  # Required: Description of what to build/accomplish
+  task_description: ""
+  # Optional: Target directory for the project
+  project_dir: "."
+  # Optional: Directory for intermediate artifacts
+  working_dir: ".ai_working"
+
+recursion:
+  max_depth: 2
+  max_total_steps: 100
+
+steps:
+  # ==========================================================================
+  # Phase 1: Capability Recon and Plan
+  # ==========================================================================
+  - id: "capability-recon-and-plan"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      Task: {{task_description}}
+      Project directory: {{project_dir}}
+      Working directory: {{working_dir}}
+
+      Perform capability reconnaissance and create an implementation plan.
+
+      ## Step 1: Identify the Hard Parts
+
+      What aspects of this task will be challenging? Consider:
+      - **External dependencies**: APIs, data sources, third-party services
+      - **Complexity**: Non-trivial logic, nuanced decisions, or difficult steps
+      - **Integration challenges**: Making different parts work together
+      - **Edge cases**: Error handling, unexpected situations, failure modes
+
+      ## Step 2: Explore Approaches
+
+      For each hard part, identify 2-3 possible approaches with trade-offs.
+
+      ## Step 3: Create Implementation Plan
+
+      Create an ordered list of implementation steps that:
+      - Addresses each hard part with the best approach
+      - Builds components/sections in dependency order
+      - Includes verification checkpoints
+
+      ## Output
+
+      Write your analysis to {{working_dir}}/CAPABILITY_RECON.md with:
+      1. List of hard parts with descriptions
+      2. Approaches for each with pros/cons
+      3. Ordered implementation plan
+
+      Provide a summary of your findings.
+    output: "capability_recon"
+    timeout: 600
+
+  # ==========================================================================
+  # Phase 2: Build Components / Create Plan
+  # ==========================================================================
+  - id: "build-or-plan"
+    agent: "foundation:modular-builder"
+    prompt: |
+      Task: {{task_description}}
+      Project directory: {{project_dir}}
+      Working directory: {{working_dir}}
+
+      Capability Recon:
+      {{capability_recon}}
+
+      Based on the task and recon, execute the appropriate approach:
+
+      ## If this is a CODING task (requires writing code, scripts, or software):
+
+      Build modular components to resolve each hard part:
+      1. Create focused modules in `{{working_dir}}/components/[component_name]/`
+      2. Keep each component independent and testable
+      3. Verify each component works before moving on
+      4. Document the interface for each component
+
+      Guidelines for coding tasks:
+      - Use Python with UV inline script dependencies (PEP 723)
+      - Consider using Claude Agent SDK for intelligent/agentic features
+      - Write clean, well-documented code
+      - Include basic tests or verification scripts
+
+      Then create a final proposal to create the final solution requested by the user.
+
+      Create `{{working_dir}}/COMPONENTS_SUMMARY.md` documenting each component.
+
+      ## If this is a NON-CODING task (research, analysis, writing, planning, etc.):
+
+      Create a detailed execution plan with validation:
+      1. Break down into concrete, actionable steps
+      2. Define validation criteria for each step
+      3. Specify deliverables for each step
+      4. Include checkpoints to verify progress
+
+      Create `{{working_dir}}/EXECUTION_PLAN.md` with the detailed plan.
+
+      ## Output
+
+      Provide a summary of what was built or planned.
+    output: "phase2_result"
+    timeout: 1200
+
+  # ==========================================================================
+  # Phase 3: Execute and Validate End-to-End
+  # ==========================================================================
+  - id: "execute-and-validate"
+    agent: "foundation:modular-builder"
+    prompt: |
+      Task: {{task_description}}
+      Project directory: {{project_dir}}
+      Working directory: {{working_dir}}
+
+      Phase 2 Result:
+      {{phase2_result}}
+
+      Complete the task end-to-end and validate the results.
+
+      ## If this is a CODING task:
+
+      1. **Integrate**: Combine all components into a working solution
+      2. **Create Entry Point**: Main script with clear usage
+      3. **Test End-to-End**: Run with realistic inputs, test edge cases
+      4. **Debug and Fix**: If ANY issues occur, you MUST fix them. Do NOT give up.
+      5. **Document**: Create README.md with usage instructions
+
+      The final solution should be in {{project_dir}} with working code and documentation.
+
+      ## If this is a NON-CODING task:
+
+      1. **Execute**: Follow the plan step by step
+      2. **Validate**: Check each step against its validation criteria
+      3. **Produce Deliverables**: Create all specified outputs
+      4. **Adapt if Needed**: If something doesn't work, find alternatives. Do NOT give up.
+      5. **Document Results**: Create {{working_dir}}/RESULTS.md with outcomes
+
+      ## Important
+
+      **Do NOT stop if you encounter issues.** Debug, adapt, and iterate until the task is complete. You have the tools and context to resolve problems.
+
+      ## Output
+
+      Provide a summary of:
+      - What was accomplished
+      - How to use/access the results
+      - Any issues encountered and how they were resolved
+
+      If the user asked for it, be sure to place a README in the correct directory or format the final results exactly like they requested.
+    output: "final_result"
+    timeout: 1200

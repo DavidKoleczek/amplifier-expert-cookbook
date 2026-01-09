@@ -9,13 +9,43 @@
 # the workflow does clearly.
 
 workflows:
+  # ============================================================================
+  # DEFAULT WORKFLOW - Use for most non-trivial tasks
+  # ============================================================================
+  - id: generic-task
+    name: "Generic Task Builder"
+    enabled: true
+    description: >
+      General-purpose workflow for building any software, scripts, tools,
+      automations, or coding tasks. This is the DEFAULT choice for most
+      non-trivial requests. Uses a streamlined 3-phase approach: capability
+      reconnaissance, modular component building, and end-to-end integration
+      with testing. Use this unless the request specifically matches ARC-AGI
+      puzzles or explicitly requires the comprehensive CLI Tool Builder workflow.
+    recipe: "@amplifier-expert-cookbook:generic-task/recipes/generic-task.yaml"
+    context:
+      required:
+        - name: task_description
+          description: "Description of what to build"
+      optional:
+        - name: project_dir
+          description: "Target directory for the project"
+          default: "."
+        - name: working_dir
+          description: "Directory for intermediate artifacts"
+          default: ".ai_working"
+
+  # ============================================================================
+  # SPECIALIZED WORKFLOWS - Only use when explicitly matched
+  # ============================================================================
   - id: arc-agi
     name: "ARC-AGI Solver"
     enabled: true
     description: >
       Solve ARC-AGI-2 tasks using iterative code synthesis with parallel experts
-      and majority voting. Use this for ARC-AGI puzzles, grid transformation
-      challenges, or any task involving the ARC-AGI benchmark.
+      and majority voting. ONLY use this for ARC-AGI puzzles, grid transformation
+      challenges, or any task explicitly mentioning the ARC-AGI benchmark. Do NOT
+      use for general coding tasks.
     recipe: "@amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml"
     context:
       required:
@@ -33,10 +63,13 @@ workflows:
     name: "CLI Tool Builder"
     enabled: true
     description: >
-      Build CLI applications through a multi-stage development process:
-      capability reconnaissance, pilot implementations, production building
-      blocks, and iterative testing. Use this when someone wants to create
-      a command-line tool, terminal application, or CLI utility.
+      Comprehensive multi-stage CLI application development with pilot
+      implementations, building blocks, and extensive testing. This is a
+      6-stage process: capability recon, pilot implementations, production
+      building blocks, application planning, implementation, and testing.
+      ONLY use this when the user explicitly wants a full CLI application
+      with the complete development process. For simpler tools or scripts,
+      use Generic Task Builder instead.
     recipe: "@amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml"
     context:
       required:

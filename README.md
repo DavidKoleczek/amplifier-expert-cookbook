@@ -13,8 +13,9 @@ amplifier bundle use amplifier-expert-cookbook
 Then just describe what you want:
 
 ```
+"Build me a script that fetches weather data"
+"Create a tool that converts markdown to HTML"
 "Solve the ARC task in ./puzzles/task_001.json"
-"Build me a CLI tool that fetches weather data"
 ```
 
 Amplifier will automatically route to the appropriate specialized workflow.
@@ -23,30 +24,46 @@ Amplifier will automatically route to the appropriate specialized workflow.
 
 ## Available Workflows
 
-| Workflow | Description |
-|----------|-------------|
-| **ARC-AGI Solver** | Solve ARC-AGI-2 tasks with parallel experts and voting |
-| **CLI Tool Builder** | Multi-stage CLI development with recon and pilots |
+| Workflow | Description | When to Use |
+|----------|-------------|-------------|
+| **Generic Task Builder** | Streamlined 3-phase development: recon, modular build, integration | **DEFAULT** - Most non-trivial tasks |
+| **ARC-AGI Solver** | Parallel experts with majority voting for ARC puzzles | ARC-AGI benchmark tasks only |
+| **CLI Tool Builder** | Comprehensive 6-stage CLI development | Full CLI apps with pilot implementations |
 
 ---
 
-## Usage
+## Routing Logic
 
-Load the meta-bundle and let the AI route your requests:
+The meta-bundle automatically routes your requests:
 
-```bash
-amplifier bundle use amplifier-expert-cookbook
-```
-
-**Interactive:**
-```
-User: "I need to solve the ARC task in tasks/puzzle.json"
-Amplifier: Routes to ARC-AGI Solver automatically
-```
+1. **Trivial tasks** (questions, explanations) → Handled directly
+2. **Non-trivial tasks** (building, coding) → **Generic Task Builder** (default)
+3. **ARC-AGI puzzles** → ARC-AGI Solver
+4. **Comprehensive CLI apps** → CLI Tool Builder (when explicitly requested)
 
 ---
 
 ## Workflows
+
+### Generic Task Builder (DEFAULT)
+
+Streamlined 3-phase approach for building software solutions. **This is the default for most tasks.**
+
+**How it works:**
+1. **Capability Recon & Plan**: Identify hard parts, explore approaches, create plan
+2. **Build Modular Components**: Solve each challenge independently with testable modules
+3. **Build & Test E2E**: Integrate, test, debug until working (doesn't give up!)
+
+**Required context:**
+- `task_description`: Description of what to build
+
+**Optional context:**
+- `project_dir`: Target directory (default: `.`)
+- `working_dir`: Intermediate artifacts (default: `.ai_working`)
+
+[Full documentation](./generic-task/)
+
+---
 
 ### ARC-AGI Solver
 
@@ -63,7 +80,7 @@ Solve [ARC-AGI-2](https://github.com/arcprize/ARC-AGI-2) tasks using iterative c
 
 **Optional context:**
 - `working_dir`: Output directory (default: `./arc_output`)
-- `max_iterations`: Max refinement attempts (default: `10`)
+- `max_iterations`: Max refinement attempts (default: `3`)
 
 [Full documentation](./arc-agi-solver/)
 
@@ -71,7 +88,7 @@ Solve [ARC-AGI-2](https://github.com/arcprize/ARC-AGI-2) tasks using iterative c
 
 ### CLI Tool Builder
 
-Multi-stage CLI application development with capability reconnaissance and pilot implementations.
+Comprehensive multi-stage CLI application development with capability reconnaissance and pilot implementations.
 
 **How it works:**
 1. **Capability Recon**: Identify key challenges, explore diverse approaches
@@ -100,7 +117,7 @@ Edit `context/workflows.yaml` to toggle workflows:
 
 ```yaml
 workflows:
-  - id: arc-agi
+  - id: generic-task
     enabled: false  # Disabled - won't be routed to automatically
     # ...
 ```
@@ -114,6 +131,7 @@ Disabled workflows are still accessible via direct recipe invocation.
    my-workflow/
    ├── bundle.md        # For standalone use
    ├── README.md
+   ├── context/         # Optional context files
    └── recipes/
        └── my-recipe.yaml
    ```
@@ -135,5 +153,3 @@ Disabled workflows are still accessible via direct recipe invocation.
          - name: optional_var
            default: "default_value"
    ```
-
-
