@@ -39,9 +39,12 @@ This recipe implements an approach inspired by Poetiq's ARC-AGI solver:
 
 ## Recipes
 
-The main recipe is `amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml` which orchestrates the full solving workflow.
+The main recipe is at `amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml`
 
-To execute, use the `recipes` tool and prefix the recipe path with `@`.
+To execute, use the `recipes` tool with the `execute` operation, prefixing the path with `@`:
+```
+recipes execute @amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml
+```
 
 ---
 

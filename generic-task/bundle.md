@@ -32,15 +32,25 @@ Use your agents to parallelize and break down tasks when possible. Spawn multipl
 
 ## Technical Context
 
-@generic-task:context/uv-scripts.md
+The Claude Code CLI required by the Claude Agent SDK is already installed and available in the environment.
 
-@generic-task:context/claude-agent-sdk.md
+@amplifier-expert-cookbook:generic-task/context/uv-scripts.md
+
+@amplifier-expert-cookbook:generic-task/context/claude-agent-sdk.md
 
 ## Recipe
 
-The main recipe is `@amplifier-expert-cookbook:generic-task/recipes/generic-task.yaml`
+The main recipe is at `amplifier-expert-cookbook:generic-task/recipes/generic-task.yaml`
 
-To execute, use the `recipes` tool with the `execute` operation.
+To execute, use the `recipes` tool with the `execute` operation, prefixing the path with `@`:
+```
+recipes execute @amplifier-expert-cookbook:generic-task/recipes/generic-task.yaml
+```
+
+Context variables:
+- `task_description` (required): Description of what to build/accomplish
+- `project_dir` (optional): Target directory for the project (default: ".")
+- `working_dir` (optional): Directory for intermediate artifacts (default: ".ai_working")
 
 ---
 

@@ -7,6 +7,10 @@ bundle:
 includes:
   - bundle: git+https://github.com/microsoft/amplifier-foundation@main
   - bundle: git+https://github.com/microsoft/amplifier-bundle-recipes@main
+  # Register sub-bundle namespaces for @mention resolution
+  - bundle: amplifier-expert-cookbook:arc-agi-solver
+  - bundle: amplifier-expert-cookbook:cli-tool-builder
+  - bundle: amplifier-expert-cookbook:generic-task
 ---
 
 # Amplifier Expert Cookbook
@@ -75,6 +79,31 @@ When a user makes a request, first determine if it's:
 
 **If no workflow matches (trivial task):**
 - Handle as you would normally without invoking a recipe
+
+## Available Recipes
+
+Use the `recipes` tool with the `execute` operation. Prefix recipe paths with `@` for bundle resolution.
+
+### Generic Task Builder (Default)
+For any non-trivial coding/building task:
+```
+recipes execute @amplifier-expert-cookbook:generic-task/recipes/generic-task.yaml
+```
+Context: `task_description` (required), `project_dir` (optional), `working_dir` (optional)
+
+### CLI Tool Builder
+For comprehensive CLI applications with full development lifecycle. **Use this recipe instead of Generic Task Builder whenever the user explicitly asks for a CLI tool, command-line application, or terminal-based utility.**
+```
+recipes execute @amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml
+```
+Context: `tool_name`, `tool_description`, `project_dir`
+
+### ARC-AGI Solver
+For ARC-AGI puzzle solving with parallel experts:
+```
+recipes execute @amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml
+```
+Context: `task_file` (required), `working_dir` (optional)
 
 Above all else, you must ALWAYS complete the task at handle without delegating back to the user. 
 If there is ambiguity, make reasonable assumptions focusing on quality and making sure the solution works end to end to proceed.

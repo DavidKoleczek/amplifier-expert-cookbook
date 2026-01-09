@@ -32,15 +32,23 @@ This bundle follows a structured approach to CLI tool development:
 
 ## Context
 
-@cli-tool-builder:context/uv-scripts.md
+@amplifier-expert-cookbook:cli-tool-builder/context/uv-scripts.md
 
-@cli-tool-builder:context/claude-agent-sdk.md
+@amplifier-expert-cookbook:cli-tool-builder/context/claude-agent-sdk.md
 
 ## Recipes
 
-The main recipe is `amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml` which orchestrates the full development workflow.
+The main recipe is at `amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml`
 
-To execute, use the `recipes` tool and prefix the recipe path with `@`.
+To execute, use the `recipes` tool with the `execute` operation, prefixing the path with `@`:
+```
+recipes execute @amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml
+```
+
+Context variables:
+- `tool_name` (required): Name of the CLI tool to build
+- `tool_description` (required): Description of what the tool should do
+- `project_dir` (optional): Target directory for the project
 
 ---
 
