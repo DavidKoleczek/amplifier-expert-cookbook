@@ -1,0 +1,267 @@
+name: "phd-problem-solver"
+description: "Systematic scientific problem solving with verification and code validation"
+version: "1.0.0"
+author: "Amplifier Expert Cookbook"
+tags: ["science", "physics", "chemistry", "biology", "mathematics", "verification"]
+
+# This recipe implements a structured problem-solving methodology for
+# scientific problems across physics, chemistry, biology, and mathematics.
+#
+# Steps:
+# 1. UNDERSTAND - Parse problem, identify given/find/constraints
+# 2. STRATEGY - Figure out approaches, plan for code verification
+# 3. SOLVE - Execute solution step-by-step with feedback loop
+# 4. VERIFY - Check answer and iterate if needed
+#
+# Usage:
+#   amplifier run "execute @amplifier-expert-cookbook:science-solver/recipes/phd-problem-solver.yaml with problem='...'"
+
+context:
+  problem: ""                           # Required: The scientific problem statement
+  output_dir: "./solution_workspace"    # Working directory for intermediate files
+  answer_file: ""                       # Optional: specific file path for final answer
+
+steps:
+  # ==========================================================================
+  # STEP 1: UNDERSTAND
+  # Parse the problem, identify given info, unknowns, and constraints
+  # ==========================================================================
+  - id: "parse-problem"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      You are a PhD-level scientific problem analyst. Parse and decompose this problem systematically.
+
+      ## PROBLEM
+      {{problem}}
+
+      ## YOUR TASK
+      Analyze this problem and extract the following in a structured format:
+
+      ### 1. GIVEN INFORMATION
+      - List ALL explicitly stated quantities, values, and facts
+      - Note units for all numerical values
+      - Identify any implicit assumptions stated or implied
+      - Flag any ambiguous information
+
+      ### 2. WHAT TO FIND
+      - State precisely what must be calculated, derived, or determined
+      - Clarify the expected form of the answer (numerical value, symbolic expression, proof, etc.)
+      - Note any required precision, significant figures, or format specifications
+      - If the answer should be written to a specific file, note that requirement
+
+      ### 3. CONSTRAINTS & CONDITIONS
+      - Physical constraints (conservation laws, boundary conditions, thermodynamic limits)
+      - Mathematical constraints (domains, ranges, validity conditions)
+      - Stated assumptions or approximations ("assume ideal gas", "ignore friction", etc.)
+      - Any limiting conditions that affect the solution approach
+
+      ### 4. PROBLEM CLASSIFICATION
+      - Subject area: physics / chemistry / biology / mathematics / interdisciplinary
+      - Problem type:
+        - **Derivation**: "derive", "show that", "prove"
+        - **Calculation**: "calculate", "determine the value", specific numbers given
+        - **Conceptual**: "explain", "why", "what process"
+        - **Experimental**: "observed", "results show", "data interpretation"
+      - Key governing principle or law likely needed
+      - Estimated complexity: straightforward / moderate / challenging / research-level
+
+      ### 5. POTENTIAL PITFALLS
+      - Common errors for this type of problem
+      - Tricky aspects that require careful attention
+      - Unit conversion issues
+      - Sign convention considerations
+
+      Format your response as clear markdown sections.
+    output: "problem_analysis"
+    timeout: 600
+
+  # ==========================================================================
+  # STEP 2: STRATEGY
+  # Determine solution approach and plan for verification
+  # ==========================================================================
+  - id: "develop-strategy"
+    agent: "foundation:zen-architect"
+    mode: "ARCHITECT"
+    prompt: |
+      You are developing a solution strategy for a scientific problem.
+
+      ## ORIGINAL PROBLEM
+      {{problem}}
+
+      ## PROBLEM ANALYSIS
+      (This is a structured breakdown of the problem from the previous step, identifying given information, what to find, constraints, and potential pitfalls.)
+      {{problem_analysis}}
+
+      ## YOUR TASK
+      Based on the problem type and constraints, figure out what strategies could help solve this problem. Then write a clear plan.
+
+      ### 1. IDENTIFY USEFUL STRATEGIES
+      Consider what approaches would be most effective for this type of problem:
+      - What methods or techniques are typically used for problems like this?
+      - Are there standard frameworks or principles that apply?
+      - What simplifications or approximations might be valid?
+
+      ### 2. CODE VERIFICATION PLAN
+      **Emphasize writing code to validate assumptions and results.**
+      - What calculations should be verified computationally?
+      - What assumptions can be tested with code?
+      - What numerical checks would catch errors?
+
+      ### 3. RESEARCH NEEDS
+      Identify what background information might be needed:
+      - Constants, standard values, or reference data
+      - Relevant equations or relationships
+      - **IMPORTANT: Do NOT look up the answer directly** - only background concepts and reference values that inform the solution approach
+
+      ### 4. SOLUTION PLAN
+      Write a clear, ordered plan for solving the problem:
+      1. [First step - what to do and what result to expect]
+      2. [Second step - what to do and what result to expect]
+      ...
+
+      Include:
+      - The sequence of steps to reach the answer
+      - What intermediate results to check along the way
+      - How you'll verify the final answer is correct
+
+      **Output only the strategy and plan. Do not include the problem analysis from the previous step.**
+    output: "solution_strategy"
+    timeout: 900
+
+  # ==========================================================================
+  # STEP 3: SOLVE
+  # Execute the solution with step-by-step justification
+  # ==========================================================================
+  - id: "solve"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      You are a PhD scientist solving a scientific problem.
+
+      ## PROBLEM
+      {{problem}}
+
+      ## PROBLEM ANALYSIS
+      (Structured breakdown: given information, what to find, constraints, problem type, and pitfalls.)
+      {{problem_analysis}}
+
+      ## SOLUTION STRATEGY
+      (The planned approach from the previous step, including methods to use, code verification plan, and ordered solution steps.)
+      {{solution_strategy}}
+
+      ## YOUR TASK
+      Execute the solution step by step. For EACH step:
+
+      1. **STATE** clearly what you're calculating or deriving
+      2. **JUSTIFY** why this step follows logically from the previous
+      3. **SHOW** the mathematical work explicitly - no hand-waving
+      4. **CHECK** units and dimensional consistency at each step
+      5. **NOTE** any assumptions made and whether they're justified
+
+      ### IMPORTANT: Create a Feedback Loop
+      As you work through the solution:
+      - After each major step, verify it makes physical/mathematical sense
+      - Check that intermediate results have the right order of magnitude
+      - If something seems wrong, go back and check your assumptions
+      - Iterate until all assumptions are satisfied and results are consistent
+
+      ## Write out your Step-by-Step Solution
+      Show your work here. For each step:
+      - What you're calculating and why
+      - The mathematical work
+      - Intermediate results with units
+      - Sanity checks
+      - Be rigorous. Show ALL work. No hand-waving allowed.
+
+      ## Final Answer
+      Write the final answer **exactly in the format required by the problem**.
+      - Check the original problem statement for any specific format requirements
+      - If a specific file location or format is requested, note that
+      - Include appropriate units and significant figures
+
+    output: "solution"
+    timeout: 1800
+
+  # ==========================================================================
+  # STEP 4: VERIFY
+  # Check the answer and iterate if needed
+  # ==========================================================================
+  - id: "verify"
+    agent: "foundation:zen-architect"
+    mode: "ANALYZE"
+    prompt: |
+      You are a scientist verifying a solution before publishing or submitting it.
+
+      ## PROBLEM
+      {{problem}}
+
+      ## PROBLEM ANALYSIS
+      (Structured breakdown: given information, what to find, constraints, problem type, and pitfalls.)
+      {{problem_analysis}}
+
+      ## SOLUTION
+      (The step-by-step solution from the previous step, including mathematical derivations, intermediate results, and a final answer.)
+      {{solution}}
+
+      ## YOUR TASK
+      Think like an expert in the field: **How would you verify this answer is correct?**
+
+      Come up with **at least 3 different ways** to check the solution. These should be independent verification methods that would catch different types of errors.
+
+      Some examples of verification approaches (use these or come up with others appropriate to the problem):
+      - Dimensional analysis / unit checking
+      - Testing limiting cases or special cases with known answers
+      - Order of magnitude estimates
+      - Solving the problem a different way
+      - Writing code to verify calculations numerically
+      - Checking against physical intuition or conservation laws
+      - Comparing with published values or known results
+
+      For each verification method you choose:
+      1. Explain why this check is appropriate for this problem
+      2. Perform the check
+      3. Report whether it passes or fails
+
+      **If any verification fails**, identify the error in the solution, fix it, and re-verify.
+      However, be wary of the validation leading you astray.
+
+      ---
+
+
+      ### Verification Approach
+      [Explain the 3+ methods you chose and why they're appropriate for this problem]
+
+      ### Verification Results
+      For each method:
+      - **Method:** [Name/description]
+      - **Result:** Pass/Fail
+      - **Details:** [What you checked and what you found]
+
+      ### Code (if used)
+      ```python
+      # /// script
+      # dependencies = ["sympy", "numpy", "scipy", "pint"]
+      # ///
+      
+      # Verification code...
+      ```
+
+      ### Issues Found & Corrections (if any)
+      [Describe any problems discovered and how they were fixed]
+
+      ## Final Answer
+      The final answer should be as described under the ## PROBLEM. Make sure you follow those guidelines. 
+      Do not include anything extra here so that it can be verified correctly.
+    output: "verified_solution"
+    timeout: 1200
+
+# ==========================================================================
+# OUTPUT SUMMARY
+# ==========================================================================
+#
+# The recipe produces these outputs in context:
+# - problem_analysis: Parsed problem understanding
+# - solution_strategy: Solution approach and plan
+# - solution: Complete step-by-step solution
+# - verified_solution: Verified answer with code and confidence assessment

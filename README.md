@@ -29,6 +29,7 @@ Amplifier will automatically route to the appropriate specialized workflow.
 | **Generic Task Builder** | Streamlined 3-phase development: recon, modular build, integration | **DEFAULT** - Most non-trivial tasks |
 | **ARC-AGI Solver** | Parallel experts with majority voting for ARC puzzles | ARC-AGI benchmark tasks only |
 | **CLI Tool Builder** | Comprehensive 6-stage CLI development | Full CLI apps with pilot implementations |
+| **Science Problem Solver** | 4-stage scientific problem solving with code verification | Physics, chemistry, biology, math problems |
 
 ---
 
@@ -40,6 +41,7 @@ The meta-bundle automatically routes your requests:
 2. **Non-trivial tasks** (building, coding) → **Generic Task Builder** (default)
 3. **ARC-AGI puzzles** → ARC-AGI Solver
 4. **Comprehensive CLI apps** → CLI Tool Builder (when explicitly requested)
+5. **Scientific problems** → Science Problem Solver
 
 ---
 
@@ -106,6 +108,38 @@ Comprehensive multi-stage CLI application development with capability reconnaiss
 - `working_dir`: Intermediate artifacts (default: `.ai_working`)
 
 [Full documentation](./cli-tool-builder/)
+
+---
+
+### Science Problem Solver
+
+Systematic scientific problem solving for physics, chemistry, biology, and mathematics with staged verification and code validation.
+
+**How it works:**
+1. **Understand**: Parse problem, identify given information, what to find, and constraints
+2. **Strategy**: Figure out approaches, plan for code verification
+3. **Solve**: Execute step-by-step with feedback loop checking assumptions iteratively
+4. **Verify**: Check answer using multiple verification methods, iterate if needed
+
+**Required context:**
+- `problem`: The scientific problem statement
+
+**Optional context:**
+- `output_dir`: Directory for intermediate files (default: `./solution_workspace`)
+- `answer_file`: Specific path for final answer if required by problem
+
+**Scientific computing:** The solver can use Python libraries via uv inline scripts (SymPy, NumPy, SciPy, Pint, etc.) for symbolic math, numerical computation, and unit handling.
+
+**Standalone usage:**
+```bash
+# Use the science-solver bundle directly
+amplifier bundle use amplifier-expert-cookbook:science-solver
+
+# Or execute the recipe directly
+amplifier run "execute @amplifier-expert-cookbook:science-solver/recipes/phd-problem-solver.yaml with problem='Calculate the partition function for a quantum harmonic oscillator at temperature T'"
+```
+
+[Full documentation](./science-solver/)
 
 ---
 

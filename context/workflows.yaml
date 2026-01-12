@@ -83,6 +83,33 @@ workflows:
           description: "Directory for intermediate artifacts"
           default: ".ai_working"
 
+  - id: science-solver
+    name: "Science Problem Solver"
+    enabled: true
+    description: >
+      Systematic PhD-level scientific problem solver for physics, chemistry,
+      biology, and mathematics. Uses a 4-stage approach with approval gates:
+      (1) Understand - parse problem, identify given/find/constraints,
+      (2) Strategy - classify problem type, develop solution approach with
+      emphasis on code verification, (3) Solve - execute step-by-step with
+      assumption checking and feedback loops, (4) Verify - check units,
+      limiting cases, reasonableness, and write verification code. Use this
+      for scientific derivations, proofs, calculations requiring symbolic
+      math, unit analysis, or research-level problem solving. NOT for general
+      coding tasks - use Generic Task Builder for those.
+    recipe: "@amplifier-expert-cookbook:science-solver/recipes/phd-problem-solver.yaml"
+    context:
+      required:
+        - name: problem
+          description: "The scientific problem statement to solve"
+      optional:
+        - name: output_dir
+          description: "Directory for intermediate files and verification code"
+          default: "./solution_workspace"
+        - name: answer_file
+          description: "Specific file path for final answer (if required by problem)"
+          default: ""
+
 # ============================================================================
 # HOW TO ADD A NEW WORKFLOW
 # ============================================================================

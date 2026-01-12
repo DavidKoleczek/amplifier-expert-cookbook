@@ -11,6 +11,7 @@ includes:
   - bundle: amplifier-expert-cookbook:arc-agi-solver
   - bundle: amplifier-expert-cookbook:cli-tool-builder
   - bundle: amplifier-expert-cookbook:generic-task
+  - bundle: amplifier-expert-cookbook:science-solver
 ---
 
 # Amplifier Expert Cookbook
@@ -69,6 +70,12 @@ When a user makes a request, first determine if it's:
 - The full 6-stage development process with pilot implementations
 - Extensive building blocks and testing phases
 
+**Science Problem Solver**: ONLY when the request involves:
+- Physics, chemistry, biology, or mathematics problems
+- Scientific derivations or proofs requiring step-by-step verification
+- Problems requiring symbolic mathematics, unit analysis, or limiting case verification
+- Scientific calculations with code verification
+
 ### Step 3: Execute Recipe
 
 **If a workflow matches:**
@@ -104,6 +111,19 @@ For ARC-AGI puzzle solving with parallel experts:
 recipes execute @amplifier-expert-cookbook:arc-agi-solver/recipes/arc-solver.yaml
 ```
 Context: `task_file` (required), `working_dir` (optional)
+
+### Science Problem Solver
+For scientific problems with staged verification:
+```
+recipes execute @amplifier-expert-cookbook:science-solver/recipes/phd-problem-solver.yaml
+```
+Context: `problem` (required), `output_dir` (optional), `answer_file` (optional)
+
+This recipe uses 4 steps:
+1. **Understand** - Parse problem, identify given/find/constraints
+2. **Strategy** - Figure out approaches, plan for code verification
+3. **Solve** - Execute step-by-step with feedback loop
+4. **Verify** - Check answer using multiple verification methods, iterate if needed
 
 Above all else, you must ALWAYS complete the task at handle without delegating back to the user. 
 If there is ambiguity, make reasonable assumptions focusing on quality and making sure the solution works end to end to proceed.
