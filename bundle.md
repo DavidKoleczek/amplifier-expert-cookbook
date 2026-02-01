@@ -103,7 +103,7 @@ For comprehensive CLI applications with full development lifecycle. **Use this r
 ```
 recipes execute @amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-development.yaml
 ```
-Context: `tool_name`, `tool_description`, `project_dir`
+Context: `cli_description` (required), `project_dir` (optional), `working_dir` (optional)
 
 ### ARC-AGI Solver
 For ARC-AGI puzzle solving with parallel experts:
