@@ -46,9 +46,9 @@ recipes execute @amplifier-expert-cookbook:cli-tool-builder/recipes/cli-tool-dev
 ```
 
 Context variables:
-- `tool_name` (required): Name of the CLI tool to build
-- `tool_description` (required): Description of what the tool should do
+- `cli_description` (required): Description of the CLI tool to build
 - `project_dir` (optional): Target directory for the project
+- `working_dir` (optional): Directory for intermediate artifacts
 
 ---
 
